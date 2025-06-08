@@ -1,21 +1,21 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { UserService } from '../services/UserService';
+// import { validationResult } from 'express-validator';
+import { UserService } from '../services/user-service';
 
 export class UserController {
   private userService = new UserService();
 
   async createUser(req: Request, res: Response): Promise<void> {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.status(400).json({
-          success: false,
-          message: 'Validation failed',
-          errors: errors.array(),
-        });
-        return;
-      }
+      // const errors = validationResult(req);
+      // if (!errors.isEmpty()) {
+      //   res.status(400).json({
+      //     success: false,
+      //     message: 'Validation failed',
+      //     errors: errors.array(),
+      //   });
+      //   return;
+      // }
 
       const user = await this.userService.createUser(req.body);
 
@@ -61,15 +61,15 @@ export class UserController {
 
   async updateUser(req: Request, res: Response): Promise<void> {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.status(400).json({
-          success: false,
-          message: 'Validation failed',
-          errors: errors.array(),
-        });
-        return;
-      }
+      // const errors = validationResult(req);
+      // if (!errors.isEmpty()) {
+      //   res.status(400).json({
+      //     success: false,
+      //     message: 'Validation failed',
+      //     errors: errors.array(),
+      //   });
+      //   return;
+      // }
 
       const { id } = req.params;
       const user = await this.userService.updateUser(id, req.body);

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { UserController } from '../controllers/UserController';
+import { UserController } from '../controllers/user-controller';
 import { validateRequest } from '../middleware';
 
 const router = Router();

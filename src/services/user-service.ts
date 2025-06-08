@@ -1,5 +1,5 @@
 import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
+import { User } from '../entities/user';
 import { redisClient } from '../redis/client';
 
 export class UserService {

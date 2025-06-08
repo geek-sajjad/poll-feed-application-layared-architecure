@@ -21,6 +21,7 @@
     "isolatedModules": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
 
     /* Linting */
     "strict": true,
@@ -33,6 +34,6 @@
     }
   },
   "include": ["src/**/*", "src/tests/**/*"],
-  "exclude": ["node_modules", "build"],
-  "files": ["@types/express/index.d.ts"]
+  "exclude": ["node_modules", "build"]
+  // "files": ["@types/express/index.d.ts"]
 }

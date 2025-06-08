@@ -11,11 +11,12 @@ class RedisClient {
       port: config.redis.port,
       password: config.redis.password,
       retryStrategy: times => {
+        console.log(times);
         // Exponential backoff retry delay
-        return Math.min(times * 50, 2000);
+        return Math.min(times * 10000);
       },
-      enableReadyCheck: false,
-      maxRetriesPerRequest: null,
+      // enableReadyCheck: false,
+      // maxRetriesPerRequest: null,
     });
 
     this.client.on('error', err => {

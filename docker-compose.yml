@@ -1,20 +1,20 @@
 services:
-  api-hichapp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    container_name: backend-express
-    ports:
-      - ${PORT}:${PORT}
-    working_dir: /app
-    env_file:
-      - .env
-    depends_on:
-      db-hichapp:
-        condition: service_healthy
-      redis-hichapp:
-        condition: service_healthy
+  # api-hichapp:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   container_name: backend-express
+  #   ports:
+  #     - ${PORT}:${PORT}
+  #   working_dir: /app
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     db-hichapp:
+  #       condition: service_healthy
+  #     redis-hichapp:
+  #       condition: service_healthy
 
   db-hichapp:
     container_name: postgres
@@ -25,11 +25,18 @@ services:
       - data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_DB=${DB_DATABASE}
       - POSTGRES_USER=${DB_USER:-postgres}
     healthcheck:
       test:
-        ['CMD', 'pg_isready', '-U', '${DB_USER:-postgres}', '-d', '${DB_NAME}']
+        [
+          'CMD',
+          'pg_isready',
+          '-U',
+          '${DB_USER:-postgres}',
+          '-d',
+          '${DB_DATABASE}',
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
