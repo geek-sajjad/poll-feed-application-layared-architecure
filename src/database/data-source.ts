@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
-import { User } from './entities/user';
-import { config } from './config';
+import { config } from '../config';
+import { PollEntity } from '@/entities/poll-entity';
+import { VoteEntity } from '@/entities/vote-entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,9 +12,9 @@ export const AppDataSource = new DataSource({
   database: config.database.database,
   synchronize: config.nodeEnv === 'development', // Only in development
   logging: config.nodeEnv === 'development',
-  entities: [User], // Add your entities here
-  migrations: ['src/migrations/*.ts'],
-  subscribers: ['src/subscribers/*.ts'],
+  entities: [PollEntity, VoteEntity], // Add your entities here
+  migrations: ['src/database/migrations/*.ts'],
+  subscribers: ['src/database/subscribers/*.ts'],
   ssl: config.nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
 });
 

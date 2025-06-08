@@ -6,7 +6,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node build/index.js",
     "dev": "nodemon -L -r tsconfig-paths/register src/index.ts --watch \"src/**/*.{ts,js}\"",
-    "build": "tsc -p tsconfig.build.json && tsc-alias"
+    "build": "tsc -p tsconfig.build.json && tsc-alias",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "sh -c 'pnpm run typeorm migration:generate -d src/database/data-source.ts src/database/migrations/$0'",
+    "migration:create": "sh -c 'pnpm run typeorm migration:create src/database/migrations/$0'",
+    "migration:revert": "pnpm run typeorm migration:revert -d src/database/data-source.ts",
+    "migration:run": "pnpm run typeorm migration:run -d src/database/data-source.ts",
+    "migration:reset": "pnpm run typeorm schema:drop -d src/database/data-source.ts",
+    "seed": "ts-node src/database/seeders/seed.ts"
   },
   "keywords": [],
   "author": "",

@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { config } from './config';
 import { userRoutes } from './routes/user-rotues';
+import { pollRoutes } from './routes/poll-routes';
+
 import { rateLimiter, errorHandler, requestLogger } from './middleware';
 
 const app = express();
@@ -37,6 +39,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/users', userRoutes);
+app.use('/api/polls', pollRoutes);
 
 // Catch-all route for undefined endpoints
 app.use('/{*any}', (req, res) => {
