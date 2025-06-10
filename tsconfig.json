@@ -5,10 +5,10 @@
   "compilerOptions": {
     "types": ["node", "jest"],
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "commonjs",
     "lib": ["ES2022"],
     "moduleResolution": "node",
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "build",
     "baseUrl": ".",
     "skipLibCheck": true,
