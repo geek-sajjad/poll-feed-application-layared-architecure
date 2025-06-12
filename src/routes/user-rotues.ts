@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { UserController } from '../controllers/user-controller';
-import { validateRequest } from '../middleware';
+import { validateRequest } from '../middleware/validate-request';
 
 const router = Router();
 const userController = new UserController();

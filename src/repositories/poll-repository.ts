@@ -1,9 +1,8 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../data-source';
+import { AppDataSource } from '../database/data-source';
 import { PollEntity } from '../entities/poll-entity';
 import { VoteEntity } from '../entities/vote-entity';
 import { Poll } from '../types/poll-types';
-
 export class PollRepository {
   private pollRepo: Repository<PollEntity>;
   private voteRepo: Repository<VoteEntity>;
@@ -14,13 +13,20 @@ export class PollRepository {
   }
 
   async create(poll: Omit<Poll, 'id' | 'createdAt'>): Promise<void> {
-    await this.pollRepo.query(
-      `
-      INSERT INTO polls (id, title, options, tags, "createdAt")
-      VALUES (gen_random_uuid(), $1, $2, $3, NOW())
-      `,
-      [poll.title, poll.options, poll.tags]
-    );
+    console.log('creating poll', poll);
+    try {
+      const res = await this.pollRepo.query(
+        `
+        INSERT INTO polls (id, title, options, "createdAt")
+        VALUES (gen_random_uuid(), $1, $2, NOW())
+        `,
+        [poll.title, poll.options]
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   async find({
@@ -76,7 +82,7 @@ export class PollRepository {
       id: result.id,
       title: result.title,
       options: result.options,
-      tags: result.tags,
+      // tags: result.tags,
       createdAt: result.createdAt,
     };
   }

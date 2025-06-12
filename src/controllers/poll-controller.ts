@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { PollService } from '../services/poll-service';
+import { getValidatedData } from '@/utils/helper-functions';
+import { createPollSchema } from '@/constants/validation-schemas';
 
 export class PollController {
   private pollService: PollService;
@@ -9,8 +11,11 @@ export class PollController {
   }
 
   async createPoll(req: Request, res: Response): Promise<void> {
-    const { title, options, tags } = req.body;
-    await this.pollService.createPoll({ title, options, tags });
+    const { body } = getValidatedData(req, createPollSchema);
+    await this.pollService.createPoll({
+      options: body.options,
+      title: body.title,
+    });
     res.status(201).send();
   }
 

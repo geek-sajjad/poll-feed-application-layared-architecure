@@ -5,7 +5,11 @@ import { config } from './config';
 import { userRoutes } from './routes/user-rotues';
 import { pollRoutes } from './routes/poll-routes';
 
-import { rateLimiter, errorHandler, requestLogger } from './middleware';
+import { rateLimiter, requestLogger } from './middleware';
+import {
+  globalErrorHandler,
+  notFoundHandler,
+} from './middleware/error-handler';
 
 const app = express();
 
@@ -42,14 +46,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/polls', pollRoutes);
 
 // Catch-all route for undefined endpoints
-app.use('/{*any}', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found',
-  });
-});
+app.use('/{*any}', notFoundHandler);
 
-// Error handling middleware (must be last)
-app.use(errorHandler);
-
+// Global error handler (must be last)
+app.use(globalErrorHandler);
 export { app };

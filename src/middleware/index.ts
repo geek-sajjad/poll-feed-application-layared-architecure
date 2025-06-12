@@ -52,35 +52,35 @@ export const authenticateToken = (
 };
 
 // Error handling middleware
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  console.error('Error:', err);
+// export const errorHandler = (
+//   err: Error,
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ): void => {
+//   console.error('Error:', err);
 
-  // Default error
-  let error = { ...err };
-  error.message = err.message;
+//   // Default error
+//   let error = { ...err };
+//   error.message = err.message;
 
-  // TypeORM duplicate key error
-  if (err.message.includes('duplicate key')) {
-    const message = 'Resource already exists';
-    error = { name: 'ValidationError', message } as any;
-  }
+//   // TypeORM duplicate key error
+//   if (err.message.includes('duplicate key')) {
+//     const message = 'Resource already exists';
+//     error = { name: 'ValidationError', message } as any;
+//   }
 
-  // TypeORM validation error
-  if (err.name === 'QueryFailedError') {
-    const message = 'Database query failed';
-    error = { name: 'ValidationError', message } as any;
-  }
+//   // TypeORM validation error
+//   if (err.name === 'QueryFailedError') {
+//     const message = 'Database query failed';
+//     error = { name: 'ValidationError', message } as any;
+//   }
 
-  res.status(error.name === 'ValidationError' ? 400 : 500).json({
-    success: false,
-    message: error.message || 'Server Error',
-  });
-};
+//   res.status(error.name === 'ValidationError' ? 400 : 500).json({
+//     success: false,
+//     message: error.message || 'Server Error',
+//   });
+// };
 
 // Request logging middleware
 export const requestLogger = (
@@ -98,46 +98,4 @@ export const requestLogger = (
   });
 
   next();
-};
-
-export const validateRequest = (schema: AnyZodObject) => {
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      // Validate request data (body, params, query)
-      const validatedData = await schema.parseAsync({
-        body: req.body,
-        params: req.params,
-        query: req.query,
-      });
-
-      // Attach validated data to request object
-      req.body = validatedData.body || req.body;
-      req.params = validatedData.params || req.params;
-      req.query = validatedData.query || req.query;
-
-      next();
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errorMessages = error.errors.map(issue => ({
-          field: issue.path.join('.'),
-          message: issue.message,
-        }));
-
-        res.status(400).json({
-          error: 'Validation failed',
-          details: errorMessages,
-        });
-        return;
-      }
-
-      // Handle other errors
-      res.status(500).json({
-        error: 'Internal server error',
-      });
-    }
-  };
 };

@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
 // import { validationResult } from 'express-validator';
 import { UserService } from '../services/user-service';
+// import { getValidatedData } from '@/middleware/validate-request';
+import z from 'zod';
 
 export class UserController {
   private userService = new UserService();
 
   async createUser(req: Request, res: Response): Promise<void> {
     try {
+      // type ValidatedUserRequest = z.infer<typeof userRequestSchema>;
+
+      // getValidatedData
       // const errors = validationResult(req);
       // if (!errors.isEmpty()) {
       //   res.status(400).json({
@@ -17,7 +22,7 @@ export class UserController {
       //   return;
       // }
 
-      const user = await this.userService.createUser(req.body);
+      const user = await this.userService.createUser(req.validated?.body);
 
       res.status(201).json({
         success: true,
