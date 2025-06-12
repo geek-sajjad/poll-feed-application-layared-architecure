@@ -41,6 +41,7 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
+  console.log(err);
   // Set default values
   let error = { ...err };
   error.statusCode = err.statusCode || 500;

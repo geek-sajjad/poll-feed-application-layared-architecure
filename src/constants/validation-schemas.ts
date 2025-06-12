@@ -12,7 +12,7 @@ export const createPollSchema = z.object({
 
 export const getPollsSchema = z.object({
   query: z.object({
-    tag: z.string().min(1, 'Tag cannot be empty').optional(),
+    tag: z.array(z.string().optional()),
     page: z
       .string()
       .regex(/^\d+$/, 'Page must be a positive integer')
