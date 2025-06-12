@@ -13,7 +13,7 @@ export interface CreatePollInput {
 }
 
 export interface GetPollsInput {
-  tag?: string;
+  tag?: (string | undefined)[];
   page?: number;
   limit?: number;
   userId: string;

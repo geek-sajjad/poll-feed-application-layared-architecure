@@ -18,7 +18,7 @@ export class PollEntity {
   @Column()
   title: string;
 
-  @Column({ type: 'json' }) //Note: the typeorm does not support Array of string type for postgres, so we have to manually edit the migration file, the json type is temp.
+  @Column('simple-array') //Note: the typeorm does not support Array of string type for postgres, so we have to manually edit the migration file, the json type is temp.
   options: string[];
 
   // @Column('jsonb')

@@ -14,19 +14,14 @@ export class PollRepository {
 
   async create(poll: Omit<Poll, 'id' | 'createdAt'>): Promise<void> {
     console.log('creating poll', poll);
-    try {
-      const res = await this.pollRepo.query(
-        `
+
+    await this.pollRepo.query(
+      `
         INSERT INTO polls (id, title, options, "createdAt")
         VALUES (gen_random_uuid(), $1, $2, NOW())
         `,
-        [poll.title, poll.options]
-      );
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+      [poll.title, poll.options]
+    );
   }
 
   async find({
@@ -35,25 +30,38 @@ export class PollRepository {
     skip,
     limit,
   }: {
-    tag?: string;
+    tag?: (string | undefined)[];
     userId: string;
     skip: number;
     limit: number;
   }): Promise<Poll[]> {
+    // const query = `
+    //   SELECT p.id, p.title, p.options, p.tags, p."createdAt"
+    //   FROM polls p
+    //   WHERE p.id NOT IN (
+    //     SELECT v."pollId"
+    //     FROM votes v
+    //     WHERE v."userId" = $1
+    //   )
+    //   ${tag ? `AND $2 = ANY(p.tags)` : ''}
+    //   ORDER BY p."createdAt" DESC
+    //   OFFSET $3
+    //   LIMIT $4
+    // `;
     const query = `
-      SELECT p.id, p.title, p.options, p.tags, p."createdAt"
+      SELECT p.id, p.title, p.options, p."createdAt"
       FROM polls p
       WHERE p.id NOT IN (
         SELECT v."pollId"
         FROM votes v
         WHERE v."userId" = $1
       )
-      ${tag ? `AND $2 = ANY(p.tags)` : ''}
       ORDER BY p."createdAt" DESC
-      OFFSET $3
-      LIMIT $4
+      OFFSET $2
+      LIMIT $3
     `;
-    const params = tag ? [userId, tag, skip, limit] : [userId, skip, limit];
+    // const params = tag ? [userId, tag, skip, limit] : [userId, skip, limit];
+    const params = [userId, skip, limit];
 
     const result = await this.pollRepo.query(query, params);
 
@@ -69,7 +77,7 @@ export class PollRepository {
   async findById(id: string): Promise<Poll | null> {
     const [result] = await this.pollRepo.query(
       `
-      SELECT id, title, options, tags, "createdAt"
+      SELECT id, title, options, "createdAt"
       FROM polls
       WHERE id = $1
       `,
@@ -91,13 +99,13 @@ export class PollRepository {
     const startOfDay = new Date();
     startOfDay.setUTCHours(0, 0, 0, 0);
 
+    // QueryOption: AND "isSkip" = false
     const result = await this.voteRepo.query(
       `
       SELECT COUNT(*) as count
       FROM votes
       WHERE "userId" = $1
       AND "createdAt" >= $2
-      AND "isSkip" = false
       `,
       [userId, startOfDay.toISOString()]
     );
@@ -110,10 +118,11 @@ export class PollRepository {
     userId: string,
     optionIndex: number
   ): Promise<void> {
+    console.log([pollId, userId, optionIndex]);
     await this.voteRepo.query(
       `
-      INSERT INTO votes (id, "pollId", "userId", "optionIndex", "isSkip", "createdAt")
-      VALUES (gen_random_uuid(), $1, $2, $3, false, NOW())
+      INSERT INTO votes ( "pollId", "userId", "optionIndex", "isSkip", "createdAt")
+      VALUES ($1, $2, $3, false, NOW())
       `,
       [pollId, userId, optionIndex]
     );
@@ -122,8 +131,8 @@ export class PollRepository {
   async recordSkip(pollId: string, userId: string): Promise<void> {
     await this.voteRepo.query(
       `
-      INSERT INTO votes (id, "pollId", "userId", "optionIndex", "isSkip", "createdAt")
-      VALUES (gen_random_uuid(), $1, $2, NULL, true, NOW())
+      INSERT INTO votes ("pollId", "userId", "optionIndex", "isSkip", "createdAt")
+      VALUES ($1, $2, NULL, true, NOW())
       `,
       [pollId, userId]
     );

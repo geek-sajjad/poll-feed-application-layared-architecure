@@ -1,3 +1,4 @@
+import { AppError } from '@/utils/app-error';
 import { PollRepository } from '../repositories/poll-repository';
 import {
   Poll,
@@ -40,18 +41,27 @@ export class PollService {
     userId: string,
     optionIndex: number
   ): Promise<void> {
+    // TODO: Optimze for high concurency
     const dailyVoteCount =
       await this.pollRepository.getUserDailyVoteCount(userId);
+    console.log('dailyVoteCount', dailyVoteCount);
     if (dailyVoteCount >= 100) {
-      throw new Error('Daily vote limit of 100 reached');
+      throw AppError.badRequest({
+        message: 'Daily vote limit of 100 reached',
+      });
     }
 
     const poll = await this.pollRepository.findById(pollId);
     if (!poll) {
-      throw new Error('Poll not found');
+      throw AppError.notFound({
+        message: 'Poll not found',
+      });
     }
+
     if (optionIndex >= poll.options.length) {
-      throw new Error('Invalid option index');
+      throw AppError.badRequest({
+        message: 'Invalid option index',
+      });
     }
 
     await this.pollRepository.recordVote(pollId, userId, optionIndex);
@@ -60,7 +70,9 @@ export class PollService {
   async skipPoll(pollId: string, userId: string): Promise<void> {
     const poll = await this.pollRepository.findById(pollId);
     if (!poll) {
-      throw new Error('Poll not found');
+      throw AppError.notFound({
+        message: 'Poll not found',
+      });
     }
 
     await this.pollRepository.recordSkip(pollId, userId);
@@ -69,7 +81,9 @@ export class PollService {
   async getPollStats(pollId: string): Promise<PollStats> {
     const poll = await this.pollRepository.findById(pollId);
     if (!poll) {
-      throw new Error('Poll not found');
+      throw AppError.notFound({
+        message: 'Poll not found',
+      });
     }
 
     const voteCounts = await this.pollRepository.getVoteCounts(pollId);
