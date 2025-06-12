@@ -1,6 +1,6 @@
 import { app } from './app';
 import { config } from './config';
-import { initializeDatabase } from './data-source';
+import { initializeDatabase } from './database/data-source';
 import { redisClient } from './redis/client';
 
 const startServer = async (): Promise<void> => {

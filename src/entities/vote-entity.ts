@@ -10,11 +10,11 @@ import {
 import { PollEntity } from './poll-entity';
 
 @Entity('votes')
-@Index('idx_votes_pollId_userId', ['pollId', 'userId'], { unique: true }) // Ensure one interaction per user per poll
-@Index('idx_votes_userId_createdAt', ['userId', 'createdAt']) // For daily vote limit checks
-@Index('idx_votes_pollId_optionIndex', ['pollId', 'optionIndex']) // For vote counting
+// @Index('idx_votes_pollId_userId', ['pollId', 'userId'], { unique: true }) // Ensure one interaction per user per poll
+// @Index('idx_votes_userId', ['userId']) // For daily vote limit checks
+// @Index('idx_votes_pollId_optionIndex', ['pollId', 'optionIndex']) // For vote counting
 export class VoteEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: string;
 
   @Column()
@@ -23,7 +23,7 @@ export class VoteEntity {
   @Column()
   userId: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'smallint' })
   optionIndex: number | null; // Null for skips
 
   @Column({ default: false })

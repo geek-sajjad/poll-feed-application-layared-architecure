@@ -9,8 +9,8 @@ import {
 import { VoteEntity } from './vote-entity';
 
 @Entity('polls')
-@Index('idx_polls_createdAt', ['createdAt']) // For sorting by recency
-@Index('idx_polls_tags', ['tags']) // For tag-based filtering
+// @Index('idx_polls_createdAt', ['createdAt']) // For sorting by recency
+// @Index('idx_polls_tags', ['tags']) // For tag-based filtering
 export class PollEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,11 +18,11 @@ export class PollEntity {
   @Column()
   title: string;
 
-  @Column('jsonb')
+  @Column({ type: 'json' }) //Note: the typeorm does not support Array of string type for postgres, so we have to manually edit the migration file, the json type is temp.
   options: string[];
 
-  @Column('jsonb')
-  tags: string[];
+  // @Column('jsonb')
+  // tags: string[];
 
   @CreateDateColumn()
   createdAt: Date;

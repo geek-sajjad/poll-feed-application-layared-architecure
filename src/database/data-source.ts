@@ -10,12 +10,12 @@ export const AppDataSource = new DataSource({
   username: config.database.username,
   password: config.database.password,
   database: config.database.database,
-  synchronize: config.nodeEnv === 'development', // Only in development
-  logging: config.nodeEnv === 'development',
+  synchronize: false, // Only in development
+  logging: false,
   entities: [PollEntity, VoteEntity], // Add your entities here
-  migrations: ['src/database/migrations/*.ts'],
-  subscribers: ['src/database/subscribers/*.ts'],
-  ssl: config.nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
+  migrations: ['src/database/migrations/*.js'],
+  // subscribers: ['src/database/subscribers/*.ts'],
+  // ssl: config.nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 export const initializeDatabase = async (): Promise<void> => {
