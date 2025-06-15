@@ -3,6 +3,7 @@ import { config } from '../config';
 import { PollEntity } from '@/entities/poll-entity';
 import { VoteEntity } from '@/entities/vote-entity';
 import { User } from '@/entities/user-entity';
+import { TagEntity } from '@/entities/tag.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: config.database.database,
   synchronize: false, // Only in development
   logging: false,
-  entities: [PollEntity, VoteEntity, User], // Add your entities here
+  entities: [PollEntity, VoteEntity, User, TagEntity], // Add your entities here
   migrations: ['src/database/migrations/*.ts'],
   // subscribers: ['src/database/subscribers/*.ts'],
   // ssl: config.nodeEnv === 'production' ? { rejectUnauthorized: false } : false,

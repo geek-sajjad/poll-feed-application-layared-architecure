@@ -5,8 +5,11 @@ import {
   CreateDateColumn,
   Index,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { VoteEntity } from './vote-entity';
+import { TagEntity } from './tag.entity';
 
 @Entity('polls')
 // @Index('idx_polls_createdAt', ['createdAt']) // For sorting by recency
@@ -23,6 +26,14 @@ export class PollEntity {
 
   // @Column('jsonb')
   // tags: string[];
+
+  @ManyToMany(() => TagEntity, tag => tag.polls, { cascade: true })
+  @JoinTable({
+    name: 'poll_tags',
+    joinColumn: { name: 'pollId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tagId', referencedColumnName: 'id' },
+  })
+  tags: TagEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
