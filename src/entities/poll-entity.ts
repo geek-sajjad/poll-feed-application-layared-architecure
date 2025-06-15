@@ -21,13 +21,13 @@ export class PollEntity {
   @Column()
   title: string;
 
-  @Column('simple-array') //Note: the typeorm does not support Array of string type for postgres, so we have to manually edit the migration file, the json type is temp.
+  @Column({ type: 'varchar', array: true }) //Note: the typeorm does not support Array of string type for postgres, so we have to manually edit the migration file, the json type is temp.
   options: string[];
 
   // @Column('jsonb')
   // tags: string[];
 
-  @ManyToMany(() => TagEntity, tag => tag.polls, { cascade: true })
+  @ManyToMany(() => TagEntity, { cascade: true })
   @JoinTable({
     name: 'poll_tags',
     joinColumn: { name: 'pollId', referencedColumnName: 'id' },

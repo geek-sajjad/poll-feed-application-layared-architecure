@@ -9,6 +9,6 @@ export class TagEntity {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => PollEntity, poll => poll.tags)
-  polls: PollEntity[];
+  // @ManyToMany(() => PollEntity, poll => poll.tags)
+  // polls: PollEntity[];
 }

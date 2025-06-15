@@ -18,7 +18,7 @@ export class PollService {
     const poll: Omit<Poll, 'id' | 'createdAt'> = {
       title: input.title,
       options: input.options,
-      // tags: input.tags || [],
+      tags: input.tags || [],
     };
     await this.pollRepository.create(poll);
   }

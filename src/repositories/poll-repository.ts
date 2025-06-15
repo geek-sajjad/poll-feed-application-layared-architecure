@@ -1,27 +1,59 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AppDataSource } from '../database/data-source';
 import { PollEntity } from '../entities/poll-entity';
 import { VoteEntity } from '../entities/vote-entity';
 import { Poll } from '../types/poll-types';
+import { TagEntity } from '@/entities/tag.entity';
 export class PollRepository {
   private pollRepo: Repository<PollEntity>;
   private voteRepo: Repository<VoteEntity>;
+  private tagRepo: Repository<TagEntity>;
 
   constructor() {
     this.pollRepo = AppDataSource.getRepository(PollEntity);
     this.voteRepo = AppDataSource.getRepository(VoteEntity);
+    this.tagRepo = AppDataSource.getRepository(TagEntity);
   }
 
   async create(poll: Omit<Poll, 'id' | 'createdAt'>): Promise<void> {
-    console.log('creating poll', poll);
+    let tags: TagEntity[] = [];
 
-    await this.pollRepo.query(
-      `
-        INSERT INTO polls (id, title, options, "createdAt")
-        VALUES (gen_random_uuid(), $1, $2, NOW())
-        `,
-      [poll.title, poll.options]
-    );
+    if (poll.tags?.length > 0) {
+      // const tagNames = poll.tags.map(name => ({ name }));
+      // await this.tagRepo
+      //   .createQueryBuilder()
+      //   .insert()
+      //   .values(tagNames)
+      //   .orIgnore()
+      //   .execute();
+
+      // tags = await this.tagRepo.find({
+      //   where: { name: In(poll.tags) },
+      // });
+
+      // await this.pollRepo.query(
+      //   `
+      //     INSERT INTO polls (id, title, options, "createdAt")
+      //     VALUES (gen_random_uuid(), $1, $2, NOW())
+      //     `,
+      //   [poll.title, poll.options]
+      // );
+
+      await this.tagRepo.upsert(
+        poll.tags.map(name => ({ name })),
+        { conflictPaths: ['name'] }
+      );
+
+      tags = await this.tagRepo.find({
+        where: { name: In(poll.tags) },
+      });
+    }
+
+    await this.pollRepo.save({
+      title: poll.title,
+      options: poll.options,
+      tags: tags,
+    });
   }
 
   async find({
@@ -90,7 +122,7 @@ export class PollRepository {
       id: result.id,
       title: result.title,
       options: result.options,
-      // tags: result.tags,
+      tags: result.tags,
       createdAt: result.createdAt,
     };
   }

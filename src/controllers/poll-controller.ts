@@ -20,6 +20,7 @@ export class PollController {
     await this.pollService.createPoll({
       options: body.options,
       title: body.title,
+      tags: body.tags,
     });
     res.status(201).send();
   }

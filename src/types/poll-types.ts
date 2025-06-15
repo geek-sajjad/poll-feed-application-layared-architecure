@@ -2,14 +2,14 @@ export interface Poll {
   id: string;
   title: string;
   options: string[];
-  // tags: string[];
+  tags: string[];
   createdAt: string;
 }
 
 export interface CreatePollInput {
   title: string;
   options: string[];
-  // tags?: string[];
+  tags?: string[];
 }
 
 export interface GetPollsInput {

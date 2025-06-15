@@ -6,7 +6,12 @@ export const createPollSchema = z.object({
     options: z
       .array(z.string().min(1, 'Option cannot be empty'))
       .min(1, 'At least one option is required'),
-    tags: z.array(z.string().min(1, 'Tag cannot be empty')).optional(),
+    tags: z
+      .array(z.string().min(1, 'Tag cannot be empty'))
+      .optional()
+      .refine(tags => tags === undefined || tags.length > 0, {
+        message: 'At least one tag is required if tags are provided',
+      }),
   }),
 });
 
